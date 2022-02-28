@@ -1,12 +1,21 @@
 # htmls = ["01_GEN-changes.html", "02_EXO-changes.html", "03_LEV-changes.html", "04_NUM-changes.html", "05_DEU-changes.html", "06_JOS-changes.html", "07_JDG-changes.html", "08_RUT-changes.html", "09_1SA-changes.html", "10_2SA-changes.html", "11_1KI-changes.html", "12_2KI-changes.html", "13_1CH-changes.html", "14_2CH-changes.html", "15_EZR-changes.html", "16_NEH-changes.html", "17_EST-changes.html", "18_JOB-changes.html", "19_PSA-changes.html", "20_PRO-changes.html", "21_ECC-changes.html", "22_SNG-changes.html", "23_ISA-changes.html", "24_JER-changes.html", "25_LAM-changes.html", "26_EZK-changes.html", "27_DAN-changes.html", "28_HOS-changes.html", "29_JOL-changes.html", "30_AMO-changes.html", "31_OBA-changes.html", "32_JON-changes.html", "33_MIC-changes.html", "34_NAM-changes.html", "35_HAB-changes.html", "36_ZEP-changes.html", "37_HAG-changes.html", "38_ZEC-changes.html", "39_MAL-changes.html", "40_MAT-changes.html", "41_MRK-changes.html", "42_LUK-changes.html", "43_JHN-changes.html", "44_ACT-changes.html", "45_ROM-changes.html", "46_1CO-changes.html", "47_2CO-changes.html", "48_GAL-changes.html", "49_EPH-changes.html", "50_PHP-changes.html", "51_COL-changes.html", "52_1TH-changes.html", "53_2TH-changes.html", "54_1TI-changes.html", "55_2TI-changes.html", "56_TIT-changes.html", "57_PHM-changes.html", "58_HEB-changes.html", "59_JAS-changes.html", "60_1PE-changes.html", "61_2PE-changes.html", "62_1JN-changes.html", "63_2JN-changes.html", "64_3JN-changes.html", "65_JUD-changes.html", "66_REV-changes.html"]
-# htmls = [htmls[59]]
+htmls = ["41_MRK-thNCV.html"]
 from bs4 import BeautifulSoup as bs
+import os
 
-htmls = ["40_MAT-thNCV.html", "41_MRK-thNCV.html"]
+files = os.listdir("MAL10RO")
+
+src_dir = "."
+# for file in files:
+#     if file.split(".")[-1] == "html":
+#         htmls=os.path.join("MAL10RO", file)
+
+# htmls = ["40_MAT-thNCV.html", "41_MRK-thNCV.html"]
 changes = {}
 
 for html in htmls:
-    HTMLFile = open(html, "r", encoding="utf-16")
+    filepath = os.path.join(src_dir, html)
+    HTMLFile = open(filepath, "r", encoding="utf-16")
     index = HTMLFile.read()
 
     index = index.replace('<div class="unchanged">','<div class="unchanged"><span>\c</span>' )
@@ -14,7 +23,7 @@ for html in htmls:
     soupfile = bs(index, 'lxml')
     spans = soupfile.find_all('span')
 
-    adtn =0
+    adtn = 0
     dltn = 0
     bk = html[3:6]
     changes[bk] = {}
@@ -54,20 +63,6 @@ for html in htmls:
                 changes[bk][ch][v].append((tag_data, tag_attribute))
             except:
                 pass
-#                 try:
-#                     changes[bk][ch][v]=((tag_data, tag_attribute))
-#                 except:
-#                     try:
-#                         changes[bk][ch]={v}
-#                         changes[bk][ch][v]=((tag_data, tag_attribute))
-#                     except:
-#                         try:
-#                             changes[bk]={ch}
-#                             changes[bk][ch]={v}
-#                             changes[bk][ch][v]=((tag_data, tag_attribute))
-#                         except:
-#                             Print("Error Processing Data!\n\t{} {}:{} {}\t{}".format(bk, ch, v, tag_data, tag_attribute))
-#                             pass
         changes[bk]["Additions"] = adtn
         changes[bk]["Deletions"] = dltn
         changes[bk]["Total"]     = tot
@@ -89,5 +84,3 @@ with open("changes.txt", mode="w", encoding="utf-16") as o:
                         if item:
                             ac = "Insertion" if item[1] == "+" else "Deletion"
                             o.write("\n\t{}:\t{}".format(ac,item[0]))
-
-#                         print("{}\t{}".format(ac, item[0]))
